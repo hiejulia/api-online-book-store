@@ -14,3 +14,16 @@
 # Dependency directories (remove the comment below to include it)
 # vendor/
 
+# Development database
+data/
+*.csv
+*.db
+
+__pycache__/
+env/
+node_modules/
+tmp/
+venv/
+.DS_Store
+.env
+*.h5
