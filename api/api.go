@@ -3,7 +3,10 @@ package api
 import (
 	"fmt"
 	"github.com/gin-gonic/gin"
+	"github.com/hiejulia/api-online-book-store/api/auth"
 	"github.com/hiejulia/api-online-book-store/api/book"
+	"github.com/hiejulia/api-online-book-store/api/cart"
+	"github.com/hiejulia/api-online-book-store/api/order"
 	"github.com/hiejulia/api-online-book-store/api/user"
 	_ "github.com/hiejulia/api-online-book-store/docs"
 	swaggerFiles "github.com/swaggo/files"
@@ -23,13 +26,15 @@ func Run() (err error) {
 	r.GET("/docs/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 
 	// set utils for gin
-	user.SetupMiddleware(r)
+	auth.SetupMiddleware(r)
 	user.SetupPrivacy()
 
 	user.AddRoutes(r)
 
-	r.Use(user.Authorize)
+	r.Use(auth.Authorize)
 	book.AddRoutes(r)
+	cart.AddRoutes(r)
+	order.AddRoutes(r)
 
 	addr := fmt.Sprintf("%s:%s", os.Getenv("API_HOST"), os.Getenv("API_PORT"))
 	fmt.Println("Serving at", addr)

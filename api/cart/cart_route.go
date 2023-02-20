@@ -6,12 +6,12 @@ import (
 
 // AddRoutes for the module.
 func AddRoutes(r *gin.Engine) {
-	cart := r.Group("/cart")
+	cart := r.Group("/api/v1/cart")
 	{
 		cart.POST("/:cartId", AddItemToCart)
 		cart.GET("/:cartId", GetItemsByCartId)
-		cart.GET("/cart/:cartId/book/:bookId", AddQuantityFromCart)
-		cart.GET("/cart/:cartId/book/:bookId", RemoveQuantityFromCart)
+		cart.POST("/cart/:cartId/book/:bookId", AddQuantityFromCart)
+		cart.POST("/cart/:cartId/book/:bookId", RemoveQuantityFromCart)
 
 	}
 }

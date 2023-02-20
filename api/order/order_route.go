@@ -6,9 +6,9 @@ import (
 
 // AddRoutes for the module.
 func AddRoutes(r *gin.Engine) {
-	order := r.Group("/orders")
+	order := r.Group("/api/v1/orders")
 	{
-		order.GET("/user/:userId", GetAllOrdersByUser)
+		order.GET("/user/:userId", GetAllOrdersByUser) // Get user history orders
 		order.POST("/cart/:cartId", CreateOrder)
 	}
 }

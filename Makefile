@@ -41,6 +41,7 @@ run:
 	go run main.go
 
 test:
+	go test -v /test
 	go test -race -cover ./...
 
 tools:

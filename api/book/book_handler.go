@@ -9,6 +9,16 @@ import (
 	"net/http"
 )
 
+// GetAllBooks godoc
+// @Summary Get all books
+// @Description Get all books
+// @Tags books
+// @Accept json
+// @Produce json
+// @Param
+// @Success 200 {object} []models.Book
+// @Failure 400 {object} HTTPError
+// @Router /books [post]
 func GetAllBooks(c *gin.Context) {
 	db := c.MustGet("db").(*clients.SQL)
 	book := models.Book{}
@@ -20,6 +30,16 @@ func GetAllBooks(c *gin.Context) {
 	common.SuccessJSON(c, &books)
 }
 
+// PostBook godoc
+// @Summary Create a book
+// @Description Create a book
+// @Tags books
+// @Accept json
+// @Produce json
+// @Param
+// @Success 200 {object} models.Book
+// @Failure 400 {object} HTTPError
+// @Router /books [post]
 func PostBook(c *gin.Context) {
 	req := new(BookRequest)
 	if err := c.BindJSON(req); err != nil {

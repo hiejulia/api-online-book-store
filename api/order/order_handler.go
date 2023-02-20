@@ -11,22 +11,50 @@ import (
 
 // Move to a service
 
-// GetAllOrdersByUser Get all history orders of a user
+// GetAllOrdersByUser godoc
+// @Summary Get all orders by user
+// @Description Get user all/history orders
+// @Tags orders
+// @Accept json
+// @Produce json
+// @Param
+// @Success 200 {object} []models.Order
+// @Failure 400 {object} HTTPError
+// @Router /orders [post]
 func GetAllOrdersByUser(c *gin.Context) {
 	db := c.MustGet("db").(*clients.SQL)
 	userId := c.Param("userId")
-
-	item := models.Order{UserID: userId}
-	items := make([]models.Order, 0)
-	if err := db.Find(&item, &items); err != nil {
+	ordersResp := map[string][]models.OrderItem{}
+	order := models.Order{UserID: userId}
+	orders := make([]models.Order, 0)
+	if err := db.Find(&order, &orders); err != nil {
 		common.Error(c, http.StatusInternalServerError, err)
 		return
 	}
+	for _, ord := range orders {
+		orderId := ord.ID
+		orderItem := models.OrderItem{ID: orderId}
+		orderItems := make([]models.OrderItem, 0)
+		if err := db.Find(&orderItem, &orderItems); err != nil {
+			common.Error(c, http.StatusInternalServerError, err)
+			return
+		}
+		ordersResp[orderId] = orderItems
+	}
 
-	common.SuccessJSON(c, items)
+	common.SuccessJSON(c, ordersResp)
 }
 
-// CreateOrder
+// CreateOrder godoc
+// @Summary User create an order
+// @Description user create an order
+// @Tags orders
+// @Accept json
+// @Produce json
+// @Param
+// @Success 200 {object} []models.Order
+// @Failure 400 {object} HTTPError
+// @Router /orders [post]
 func CreateOrder(c *gin.Context) {
 	userId := c.MustGet("user").(*models.User).ID
 	db := c.MustGet("db").(*clients.SQL)

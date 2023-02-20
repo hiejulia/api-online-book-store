@@ -1,4 +1,4 @@
-package user
+package auth
 
 import (
 	"context"
@@ -12,7 +12,6 @@ import (
 	"github.com/hiejulia/api-online-book-store/clients"
 	"github.com/hiejulia/api-online-book-store/models"
 	"github.com/hiejulia/api-online-book-store/utils"
-	"math/rand"
 	"net"
 	"net/http"
 	"strings"
@@ -22,7 +21,7 @@ import (
 // Constants
 var (
 	TokenDuration = 24 * time.Hour
-	TokenIssuer   = "api.brickbanker.fans"
+	TokenIssuer   = "api.bookstore.service"
 	TokenSecret   []byte
 
 	TimeoutIgnore = 5 * time.Minute
@@ -90,7 +89,7 @@ func Authorize(c *gin.Context) {
 	} else if claims.NotBefore > now {
 		err = fmt.Errorf("token active in the future")
 	} else if claims.Subject != "" {
-		// Do nothing here without the builder name.
+		// Do nothing here without the user name.
 	} else if (claims.ExpiresAt - claims.IssuedAt) != (TokenDuration.Milliseconds() / 1000) {
 		err = fmt.Errorf("token duration incorrect")
 	}
@@ -101,42 +100,32 @@ func Authorize(c *gin.Context) {
 	}
 
 	// Validate that the token is found in the cache.
-	var builderID string
+	var userID string
 	cache := clients.Cache()
-	if builderID, err = cache.Get(header); err != nil {
+	if userID, err = cache.Get(header); err != nil {
 		common.Error(c, http.StatusUnauthorized, ErrInvalidToken)
 		return
 	}
 
-	// Validate that the builder ids match.
-	if builderID != claims.Id {
-		fmt.Println(builderID, "!=", claims.Id)
+	// Validate that the user ids match.
+	if userID != claims.Id {
+		fmt.Println(userID, "!=", claims.Id)
 		common.Error(c, http.StatusUnauthorized, ErrInvalidTokenClaims)
 		return
 	}
 
-	// Load the builder from the clients.
-	builder := &models.User{ID: claims.Id}
-	if err := clients.DB().First(builder); err != nil {
-		fmt.Println("unable to find builder", claims.Id)
+	// Load the user from the clients.
+	user := &models.User{ID: claims.Id}
+	if err := clients.DB().First(user); err != nil {
+		fmt.Println("unable to find user", claims.Id)
 		common.Error(c, http.StatusUnauthorized, ErrInvalidTokenClaims)
 		return
 	}
 
-	// Attach the builder to the request and continue the chain.
-	c.Set("builder", builder)
+	// Attach the user to the request and continue the chain.
+	c.Set("user", user)
 	c.Next()
 }
-
-// AuthorizeAdmin ...
-//func AuthorizeAdmin(c *gin.Context) {
-//	builder := c.MustGet("builder").(*models.User)
-//	if !builder.HasRole(constants.TOKEN_ROLE_MOD) {
-//		//Error(c, http.StatusForbidden, ErrNoPermission)
-//		//return
-//	}
-//	c.Next()
-//}
 
 // Database will attach a clients instance to the context.
 func Database(ignore, slow []string) func(*gin.Context) {
@@ -189,22 +178,11 @@ func removeBearer(s string) string {
 }
 
 type ReqWithEmail struct {
-	Email       string `json:"email"`
-	BuilderName string `json:"builder_name"`
+	Email    string `json:"email"`
+	UserName string `json:"user_name"`
 }
 
 var letters = []rune("ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789")
-
-// Code returns a one-time password sent in email and used
-// as verification or 2FA.
-func Code(chars int) string {
-	rand.Seed(time.Now().UnixNano())
-	b := make([]rune, chars)
-	for i := range b {
-		b[i] = letters[rand.Intn(len(letters))]
-	}
-	return string(b)
-}
 
 type MainClaims struct {
 	jwt.StandardClaims
@@ -212,18 +190,18 @@ type MainClaims struct {
 }
 
 // Token ...
-func Token(builder *models.User, role string) (string, error) {
+func Token(user *models.User, role string) (string, error) {
 	date := time.Now().UTC()
 
 	claims := &MainClaims{
 		jwt.StandardClaims{
 			Audience:  "mobile",
 			ExpiresAt: date.Add(TokenDuration).Unix(),
-			Id:        builder.ID,
+			Id:        user.ID,
 			IssuedAt:  date.Unix(),
 			Issuer:    TokenIssuer,
 			NotBefore: date.Unix(),
-			Subject:   builder.Email,
+			Subject:   user.Email,
 		},
 		role,
 	}
@@ -236,7 +214,7 @@ func Token(builder *models.User, role string) (string, error) {
 	}
 
 	cache := clients.Cache()
-	if err = cache.Set(tokenString, builder.ID, TokenDuration); err != nil {
+	if err = cache.Set(tokenString, user.ID, TokenDuration); err != nil {
 		fmt.Println("utils.Token cache.Set", err)
 		return "", err
 	}

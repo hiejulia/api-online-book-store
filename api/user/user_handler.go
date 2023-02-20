@@ -3,6 +3,7 @@ package user
 import (
 	"errors"
 	"github.com/gin-gonic/gin"
+	"github.com/hiejulia/api-online-book-store/api/auth"
 	"github.com/hiejulia/api-online-book-store/api/common"
 	"github.com/hiejulia/api-online-book-store/clients"
 	"github.com/hiejulia/api-online-book-store/models"
@@ -17,11 +18,16 @@ var (
 	ErrNotFound       = errors.New("Record not found.")
 )
 
-// @Summary User register
-// @ID user-register
+// PostPublicRegister godoc
+// @Summary Register a user
+// @Description Register a user
+// @Tags users
+// @Accept json
 // @Produce json
+// @Param
 // @Success 200 {object}
-// @Router /users/register
+// @Failure 400 {object} HTTPError
+// @Router /users [post]
 func PostPublicRegister(c *gin.Context) {
 	req := new(RegisterRequest)
 	if err := c.BindJSON(req); err != nil {
@@ -32,7 +38,7 @@ func PostPublicRegister(c *gin.Context) {
 	var err error
 	db := c.MustGet("db").(*clients.SQL)
 
-	//check for duplicate email and builder name
+	//check for duplicate email and user name
 	userCheck := &models.User{}
 	users := make([]models.User, 0)
 	where := map[string]interface{}{
@@ -74,11 +80,16 @@ func PostPublicRegister(c *gin.Context) {
 	common.SuccessJSON(c, "You will receive an email with further instructions.")
 }
 
+// PostPublicLogin godoc
 // @Summary User login
-// @ID user-login
+// @Description User login
+// @Tags users
+// @Accept json
 // @Produce json
-// @Success 200 {object}
-// @Router /users/login
+// @Param
+// @Success 200 {object} []models.User
+// @Failure 400 {object} HTTPError
+// @Router /users [post]
 func PostPublicLogin(c *gin.Context) {
 	req := new(LoginRequest)
 	if err := c.BindJSON(req); err != nil {
@@ -93,7 +104,7 @@ func PostPublicLogin(c *gin.Context) {
 		return
 	}
 
-	token, err := Token(&user, "user")
+	token, err := auth.Token(&user, "user")
 	if err != nil {
 		common.Error(c, http.StatusUnauthorized, ErrLogin)
 		return

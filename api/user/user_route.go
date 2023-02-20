@@ -6,7 +6,7 @@ import (
 
 // AddRoutes for the module.
 func AddRoutes(r *gin.Engine) {
-	user := r.Group("/users")
+	user := r.Group("/api/v1/users")
 	{
 		user.POST("/register", PostPublicRegister)
 		user.POST("/login", PostPublicLogin)

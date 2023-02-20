@@ -5,7 +5,7 @@ import (
 )
 
 func AddRoutes(r *gin.Engine) {
-	book := r.Group("/books")
+	book := r.Group("/api/v1/books")
 	{
 		book.GET("", GetAllBooks)
 		book.POST("", PostBook)

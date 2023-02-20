@@ -9,7 +9,16 @@ import (
 	"net/http"
 )
 
-// GetCartById
+// GetItemsByCartId godoc
+// @Summary Get all items by cartId
+// @Description Get all items by cartId
+// @Tags carts
+// @Accept json
+// @Produce json
+// @Param
+// @Success 200 {object} []models.CartItems
+// @Failure 400 {object} HTTPError
+// @Router /carts [post]
 func GetItemsByCartId(c *gin.Context) {
 	db := c.MustGet("db").(*clients.SQL)
 	cartId := c.Param("cartId")
@@ -24,7 +33,16 @@ func GetItemsByCartId(c *gin.Context) {
 	common.SuccessJSON(c, cartItems)
 }
 
-// AddItemToCart
+// AddItemToCart godoc
+// @Summary User add item to cart
+// @Description user add item to cart
+// @Tags carts
+// @Accept json
+// @Produce json
+// @Param
+// @Success 200 {object} []models.Cart
+// @Failure 400 {object} HTTPError
+// @Router /carts [post]
 func AddItemToCart(c *gin.Context) {
 	req := new(CartItemRequest)
 	if err := c.BindJSON(req); err != nil {
@@ -67,7 +85,16 @@ func AddItemToCart(c *gin.Context) {
 	common.SuccessJSON(c, cartId)
 }
 
-// AddQuantityFromCart
+// AddQuantityFromCart godoc
+// @Summary Add quantity to cart item
+// @Description Add quantity to cart item
+// @Tags carts
+// @Accept json
+// @Produce json
+// @Param
+// @Success 200 {object} []models.Cart
+// @Failure 400 {object} HTTPError
+// @Router /carts [post]
 func AddQuantityFromCart(c *gin.Context) {
 	db := c.MustGet("db").(*clients.SQL)
 	cartId := c.Param("cartId")
@@ -87,7 +114,16 @@ func AddQuantityFromCart(c *gin.Context) {
 	common.SuccessJSON(c, cartItems)
 }
 
-// RemoveQuantityFromCart
+// RemoveQuantityFromCart godoc
+// @Summary Remove quantity from cart
+// @Description Remove quantity from cart
+// @Tags carts
+// @Accept json
+// @Produce json
+// @Param
+// @Success 200 {object} []models.Cart
+// @Failure 400 {object} HTTPError
+// @Router /carts [post]
 func RemoveQuantityFromCart(c *gin.Context) {
 	db := c.MustGet("db").(*clients.SQL)
 	cartId := c.Param("cartId")
