@@ -15,7 +15,7 @@
 - Unit test 
 
 ### DB design 
-![Screenshot 2023-02-20 at 7.52.35 PM.png](..%2F..%2F..%2F..%2Fvar%2Ffolders%2Fqn%2F22kldy0x4bq_9zf3f47txs9m0000gn%2FT%2FTemporaryItems%2FNSIRD_screencaptureui_Bo3AoI%2FScreenshot%202023-02-20%20at%207.52.35%20PM.png)
+![Screenshot](demo/db-schema.png)
 ### API swagger doc 
 - Go to: http://localhost:3000/docs/index.html#/ 
 
