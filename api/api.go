@@ -31,7 +31,7 @@ func Run() (err error) {
 
 	user.AddRoutes(r)
 
-	r.Use(auth.Authorize)
+	//r.Use(auth.Authorize)
 	book.AddRoutes(r)
 	cart.AddRoutes(r)
 	order.AddRoutes(r)

@@ -3,7 +3,6 @@ package user
 import (
 	"errors"
 	"github.com/gin-gonic/gin"
-	"github.com/hiejulia/api-online-book-store/api/auth"
 	"github.com/hiejulia/api-online-book-store/api/common"
 	"github.com/hiejulia/api-online-book-store/clients"
 	"github.com/hiejulia/api-online-book-store/models"
@@ -24,9 +23,8 @@ var (
 // @Tags users
 // @Accept json
 // @Produce json
-// @Param
-// @Success 200 {object}
-// @Failure 400 {object} HTTPError
+// @Success 200
+// @Failure 400
 // @Router /users [post]
 func PostPublicRegister(c *gin.Context) {
 	req := new(RegisterRequest)
@@ -86,9 +84,8 @@ func PostPublicRegister(c *gin.Context) {
 // @Tags users
 // @Accept json
 // @Produce json
-// @Param
-// @Success 200 {object} []models.User
-// @Failure 400 {object} HTTPError
+// @Success 200
+// @Failure 400
 // @Router /users [post]
 func PostPublicLogin(c *gin.Context) {
 	req := new(LoginRequest)
@@ -103,16 +100,16 @@ func PostPublicLogin(c *gin.Context) {
 		common.Error(c, http.StatusUnauthorized, ErrLogin)
 		return
 	}
-
-	token, err := auth.Token(&user, "user")
-	if err != nil {
-		common.Error(c, http.StatusUnauthorized, ErrLogin)
-		return
-	}
+	//
+	//token, err := auth.Token(&user, "user")
+	//if err != nil {
+	//	common.Error(c, http.StatusUnauthorized, ErrLogin)
+	//	return
+	//}
 
 	if err := db.Update(user); err != nil {
 		common.Error(c, http.StatusUnauthorized, ErrNotFound)
 		return
 	}
-	common.SuccessJSON(c, gin.H{"token": token})
+	common.SuccessJSON(c, gin.H{"token": "ok"})
 }

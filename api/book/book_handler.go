@@ -15,9 +15,8 @@ import (
 // @Tags books
 // @Accept json
 // @Produce json
-// @Param
 // @Success 200 {object} []models.Book
-// @Failure 400 {object} HTTPError
+// @Failure 400
 // @Router /books [post]
 func GetAllBooks(c *gin.Context) {
 	db := c.MustGet("db").(*clients.SQL)
@@ -36,9 +35,8 @@ func GetAllBooks(c *gin.Context) {
 // @Tags books
 // @Accept json
 // @Produce json
-// @Param
 // @Success 200 {object} models.Book
-// @Failure 400 {object} HTTPError
+// @Failure 400
 // @Router /books [post]
 func PostBook(c *gin.Context) {
 	req := new(BookRequest)

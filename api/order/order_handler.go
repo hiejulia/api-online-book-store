@@ -17,9 +17,8 @@ import (
 // @Tags orders
 // @Accept json
 // @Produce json
-// @Param
-// @Success 200 {object} []models.Order
-// @Failure 400 {object} HTTPError
+// @Success 200
+// @Failure 400
 // @Router /orders [post]
 func GetAllOrdersByUser(c *gin.Context) {
 	db := c.MustGet("db").(*clients.SQL)
@@ -33,7 +32,7 @@ func GetAllOrdersByUser(c *gin.Context) {
 	}
 	for _, ord := range orders {
 		orderId := ord.ID
-		orderItem := models.OrderItem{ID: orderId}
+		orderItem := models.OrderItem{OrderID: orderId}
 		orderItems := make([]models.OrderItem, 0)
 		if err := db.Find(&orderItem, &orderItems); err != nil {
 			common.Error(c, http.StatusInternalServerError, err)
@@ -51,16 +50,15 @@ func GetAllOrdersByUser(c *gin.Context) {
 // @Tags orders
 // @Accept json
 // @Produce json
-// @Param
-// @Success 200 {object} []models.Order
-// @Failure 400 {object} HTTPError
+// @Success 200
+// @Failure 400
 // @Router /orders [post]
 func CreateOrder(c *gin.Context) {
-	userId := c.MustGet("user").(*models.User).ID
 	db := c.MustGet("db").(*clients.SQL)
 	cartId := c.Param("cartId")
+	userId := c.Param("userId")
 
-	cartItem := models.CartItem{ID: cartId}
+	cartItem := models.CartItem{CartID: cartId}
 	cartItems := make([]models.CartItem, 0)
 	if err := db.Find(&cartItem, &cartItems); err != nil {
 		common.Error(c, http.StatusInternalServerError, err)
@@ -70,12 +68,12 @@ func CreateOrder(c *gin.Context) {
 	totalPrice := 0.0
 	for _, item := range cartItems {
 		book := models.Book{ID: item.BookID}
-		books := make([]models.Book, 0)
-		if err := db.Find(&book, &books); err != nil {
+		if err := db.First(&book); err != nil {
 			common.Error(c, http.StatusInternalServerError, err)
 			return
 		}
-		totalPrice += books[0].Price * float64(item.Qty)
+
+		totalPrice += book.Price * float64(item.Qty)
 	}
 
 	order := models.Order{

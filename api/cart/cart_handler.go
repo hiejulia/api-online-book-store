@@ -15,9 +15,8 @@ import (
 // @Tags carts
 // @Accept json
 // @Produce json
-// @Param
-// @Success 200 {object} []models.CartItems
-// @Failure 400 {object} HTTPError
+// @Success 200
+// @Failure 400
 // @Router /carts [post]
 func GetItemsByCartId(c *gin.Context) {
 	db := c.MustGet("db").(*clients.SQL)
@@ -39,9 +38,8 @@ func GetItemsByCartId(c *gin.Context) {
 // @Tags carts
 // @Accept json
 // @Produce json
-// @Param
-// @Success 200 {object} []models.Cart
-// @Failure 400 {object} HTTPError
+// @Success 200
+// @Failure 400
 // @Router /carts [post]
 func AddItemToCart(c *gin.Context) {
 	req := new(CartItemRequest)
@@ -50,9 +48,11 @@ func AddItemToCart(c *gin.Context) {
 		return
 	}
 	cartId := c.Param("cartId")
+	userId := c.Param("userId")
+
 	db := c.MustGet("db").(*clients.SQL)
 
-	if cartId == "" {
+	if cartId == "new" {
 		cartId = utils.ID()
 	}
 
@@ -62,7 +62,7 @@ func AddItemToCart(c *gin.Context) {
 		common.Error(c, http.StatusInternalServerError, err)
 		return
 	}
-
+	cart.UserID = userId
 	if len(carts) == 0 {
 		err := db.Create(&cart)
 		if err != nil {
@@ -82,70 +82,5 @@ func AddItemToCart(c *gin.Context) {
 		common.Error(c, http.StatusInternalServerError, err)
 		return
 	}
-	common.SuccessJSON(c, cartId)
-}
-
-// AddQuantityFromCart godoc
-// @Summary Add quantity to cart item
-// @Description Add quantity to cart item
-// @Tags carts
-// @Accept json
-// @Produce json
-// @Param
-// @Success 200 {object} []models.Cart
-// @Failure 400 {object} HTTPError
-// @Router /carts [post]
-func AddQuantityFromCart(c *gin.Context) {
-	db := c.MustGet("db").(*clients.SQL)
-	cartId := c.Param("cartId")
-	bookId := c.Param("bookId")
-
-	cartItem := models.CartItem{CartID: cartId, BookID: bookId}
-	cartItems := make([]models.CartItem, 0)
-	if err := db.Find(&cartItem, &cartItems); err != nil {
-		common.Error(c, http.StatusInternalServerError, err)
-		return
-	}
-	cartItem.Qty += 1
-	if err := db.Update(&cartItem); err != nil {
-		common.Error(c, http.StatusInternalServerError, err)
-		return
-	}
-	common.SuccessJSON(c, cartItems)
-}
-
-// RemoveQuantityFromCart godoc
-// @Summary Remove quantity from cart
-// @Description Remove quantity from cart
-// @Tags carts
-// @Accept json
-// @Produce json
-// @Param
-// @Success 200 {object} []models.Cart
-// @Failure 400 {object} HTTPError
-// @Router /carts [post]
-func RemoveQuantityFromCart(c *gin.Context) {
-	db := c.MustGet("db").(*clients.SQL)
-	cartId := c.Param("cartId")
-	bookId := c.Param("bookId")
-
-	cartItem := models.CartItem{CartID: cartId, BookID: bookId}
-	cartItems := make([]models.CartItem, 0)
-	if err := db.Find(&cartItem, &cartItems); err != nil {
-		common.Error(c, http.StatusInternalServerError, err)
-		return
-	}
-	cartItem.Qty -= 1
-	if cartItem.Qty == 0 {
-		if err := db.Delete(&cartItem); err != nil {
-			common.SuccessJSON(c, cartId)
-			return
-		}
-	}
-	if err := db.Update(&cartItem); err != nil {
-		common.Error(c, http.StatusInternalServerError, err)
-		return
-	}
-
-	common.SuccessJSON(c, cartItems)
+	common.SuccessJSON(c, gin.H{"cartId": cartId, "status": "OK"})
 }

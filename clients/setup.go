@@ -12,7 +12,7 @@ import (
 
 func SetUpMain() {
 	// Env
-	env := "../.env"
+	env := ".env"
 	fenv := flag.String("env", env, "environment variable definition file location")
 	flag.Parse()
 	if *fenv != "" {

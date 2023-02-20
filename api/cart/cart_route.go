@@ -8,10 +8,8 @@ import (
 func AddRoutes(r *gin.Engine) {
 	cart := r.Group("/api/v1/cart")
 	{
-		cart.POST("/:cartId", AddItemToCart)
-		cart.GET("/:cartId", GetItemsByCartId)
-		cart.POST("/cart/:cartId/book/:bookId", AddQuantityFromCart)
-		cart.POST("/cart/:cartId/book/:bookId", RemoveQuantityFromCart)
+		cart.POST("/:cartId/users/:userId", AddItemToCart)
+		cart.GET("/:cartId/users/:userId", GetItemsByCartId)
 
 	}
 }
