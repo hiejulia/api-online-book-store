@@ -1,0 +1,87 @@
+basePath: /api/v1
+definitions:
+  models.Book:
+    properties:
+      id:
+        type: string
+      name:
+        type: string
+      price:
+        type: number
+      qty:
+        type: integer
+    type: object
+host: localhost:3000
+info:
+  contact:
+    name: Hien Nguyen
+  description: A book online store service API in Go using Gin framework.
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  title: Book store shop
+  version: "1.0"
+paths:
+  /books:
+    post:
+      consumes:
+      - application/json
+      description: Create a book
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.Book'
+        "400":
+          description: Bad Request
+      summary: Create a book
+      tags:
+      - books
+  /carts:
+    post:
+      consumes:
+      - application/json
+      description: Remove quantity from cart
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+        "400":
+          description: Bad Request
+      summary: Remove quantity from cart
+      tags:
+      - carts
+  /orders:
+    post:
+      consumes:
+      - application/json
+      description: user create an order
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+        "400":
+          description: Bad Request
+      summary: User create an order
+      tags:
+      - orders
+  /users:
+    post:
+      consumes:
+      - application/json
+      description: User login
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+        "400":
+          description: Bad Request
+      summary: User login
+      tags:
+      - users
+swagger: "2.0"

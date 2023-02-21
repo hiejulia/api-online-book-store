@@ -5,6 +5,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/hiejulia/api-online-book-store/api/auth"
 	"github.com/hiejulia/api-online-book-store/api/book"
+	"github.com/hiejulia/api-online-book-store/api/book/rating"
 	"github.com/hiejulia/api-online-book-store/api/cart"
 	"github.com/hiejulia/api-online-book-store/api/order"
 	"github.com/hiejulia/api-online-book-store/api/user"
@@ -35,6 +36,7 @@ func Run() (err error) {
 	book.AddRoutes(r)
 	cart.AddRoutes(r)
 	order.AddRoutes(r)
+	rating.AddRoutes(r)
 
 	addr := fmt.Sprintf("%s:%s", os.Getenv("API_HOST"), os.Getenv("API_PORT"))
 	fmt.Println("Serving at", addr)

@@ -100,7 +100,7 @@ func PostPublicLogin(c *gin.Context) {
 		common.Error(c, http.StatusUnauthorized, ErrLogin)
 		return
 	}
-	//
+
 	//token, err := auth.Token(&user, "user")
 	//if err != nil {
 	//	common.Error(c, http.StatusUnauthorized, ErrLogin)
@@ -111,5 +111,5 @@ func PostPublicLogin(c *gin.Context) {
 		common.Error(c, http.StatusUnauthorized, ErrNotFound)
 		return
 	}
-	common.SuccessJSON(c, gin.H{"token": "ok"})
+	common.SuccessJSON(c, gin.H{"ok": "ok"})
 }

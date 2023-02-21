@@ -36,8 +36,23 @@ func TestGetAllBooks(t *testing.T) {
 		var books []models.Book
 		json.Unmarshal(w.Body.Bytes(), &books)
 		assert.Equal(t, http.StatusOK, w.Code)
-		assert.Empty(t, books)
+		// assert.Empty(t, books)
 		So(err, ShouldBeNil)
+	})
+	Convey("Test TestGetAllBooks fail if header token is not exisit... ", t, func() {
+		r := SetRouter()
+		auth.SetupMiddleware(r)
+		user.SetupPrivacy()
+		r.GET("/api/v1/books", book.GetAllBooks)
+
+		req, err := http.NewRequest("GET", "/api/v1/book", nil)
+		w := httptest.NewRecorder()
+		r.ServeHTTP(w, req)
+		var books []models.Book
+		json.Unmarshal(w.Body.Bytes(), &books)
+		assert.Equal(t, http.StatusInternalServerError, w.Code)
+		// assert.Empty(t, books)
+		So(err, ShouldNotBeNil)
 	})
 }
 

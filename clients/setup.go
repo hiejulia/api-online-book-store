@@ -52,6 +52,7 @@ func SetUpMain() {
 		models.CartItem{},
 		models.Order{},
 		models.OrderItem{},
+		models.Rating{},
 	); err != nil {
 		panic(err)
 	}
